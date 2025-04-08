@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+        integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.css">
+    <!-- <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_red.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            height: 80vh;
+            font-family: 'Prompt', sans-serif;
+            color: #0A1829
+        }
+
+        table.dataTable.table-striped>tbody>tr.odd.selected>* {
+            box-shadow: inset 9px 20px 20px 9999px rgba(112, 124, 192, 0.95);
+            box-shadow: inset 0 0 0 9999px rgba(112, 124, 192, 0.95);
+        }
+
+        table.dataTable.table-striped>tbody>tr.even.selected>* {
+            box-shadow: inset 9px 20px 20px 9999px rgba(112, 124, 192, 0.95);
+            box-shadow: inset 0 0 0 9999px rgba(112, 124, 192, 0.95);
+        }
+
+        /* change  .bi-printer to .bi-printer-fill when hover */
+        .bi-printer-fill:hover {
+            color: #0d6efd;
+
+        }
+
+        .container {
+            max-width: 600px;
+        }
+
+        table tr th,
+        table tr td {
+            vertical-align: middle;
+        }
+
+        .container {
+            max-width: 600px;
+        }
+
+        .btn-select {
+            background-color: #62c3e8;
+            color: '#0A1829';
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-select:hover {
+            background-color: #07111D;
+            color: #A1C1E8;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 0.2rem rgba(112, 124, 192, 0.3);
+        }
+
+        .form-select:focus {
+            box-shadow: 0 0 0 0.2rem rgba(112, 124, 192, 0.3);
+        }
+
+        .bg-brand {
+            background-color: rgba(0, 174, 219, 0.1);
+        }
+
+        .text-brand {
+            color: #00AEDB;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0.95);
+                opacity: 1;
+            }
+        }
+
+        body.loading {
+            overflow: hidden;
+        }
+    </style>
+    <title>Touch Car Rent</title>
+</head>
+
+<body class="container-fluid">
+    <div id="loadingOverlay"
+        class="position-fixed top-0 start-0 w-100 h-100"
+        style="z-index: 9999; display: none; background-color: rgba(255,255,255, 0.5); flex-direction: column; justify-content: center; align-items: center;">
+        <div class="text-center d-flex flex-column justify-content-center align-items-center">
+            <img src="./detail_request.png" alt="Loading" class="img-fluid mb-3"
+                style="max-height: 250px; animation: pulse 1.5s infinite;">
+            <!-- <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 fw-bold text-primary">กำลังโหลด...</p> -->
+        </div>
+    </div>
+
+    <header>
+        <div class="row">
+            <div class="col-12 text-center">
+                <img src="https://img5.pic.in.th/file/secure-sv1/50d66255-4b76-4a9a-82b2-ecd9e0e1ef3b-removebg-preview.png"
+                    alt="brand" class="img-fluid" style="max-height: 250px;">
+            </div>
+        </div>
+    </header>
+    <div class="container p-2" id="main">
+        <form id="mainform" class="needs-validation" novalidate>
+            <div class="row mb-3 justify-content-center border rounded-3 p-3 shadow-sm bg-light">
+                <div class="col-12">
+                    <!-- ชื่อไลน์ -->
+                    <label for="name">
+                        <i class="fa-brands fa-line"></i>
+                        ชื่อไลน์ / LineName
+                    </label>
+                    <input type="text" class="form-control rounded-3" id="line_name" name="line_name" required>
+                </div>
+            </div>
+            <div class="row mt-3 mb-3 justify-content-center border rounded-3 p-3 shadow-sm bg-light">
+                <div class="col-12">
+                    <!-- รับรถวันที่ / Pick up day -->
+                    <label for="pickup_date">
+                        <i class="fa-solid fa-calendar-week"></i>
+                        วันรับรถ / Pick up date
+                    </label>
+                    <input type="text" class="form-control rounded-3" id="pickup_date" name="pickup_date" required>
+                    <div class="invalid-feedback">
+                        กรุณาเลือกวันรับรถ
+                    </div>
+                </div>
+                <div class="col mt-3">
+                    <!-- รับรถเวลา / Pick up time -->
+                    <label for="pickup_time">
+                        <i class="fa-solid fa-clock"></i>
+                        เวลารับรถ / Pick up time
+                    </label>
+                    <input type="text" class="form-control rounded-3" id="pickup_time" name="pickup_time" required>
+                    <div class="invalid-feedback">
+                        กรุณาเลือกเวลารับรถ
+                    </div>
+                </div>
+                <div class="col-12 mt-3">
+                    <label for="pickup_branch">
+                        <i class="fa-solid fa-location-dot"></i>
+                        สาขารับรถ/ Branch pick up
+                    </label>
+                    <select class="form-select rounded-3" id="pickup_branch" name="pickup_branch" required>
+                        <option value="">เลือกสาขา / Select branch</option>
+                        <option value="สาขา ปตท.พีเอ็ม ประเวศ / Ptt PM Pravate">สาขา ปตท.พีเอ็ม ประเวศ / Ptt PM Pravate
+                        </option>
+                        <option value="สาขา เดอะมอลล์โคราช / The Mall Korat">สาขา เดอะมอลล์โคราช / The Mall Korat
+                        </option>
+                        <option value="สาขาโลตัส บางแค / Lotus Bang Kae">สาขาโลตัส บางแค / Lotus Bang Kae</option>
+                        <option value="สาขา Big C ปากช่อง / Big C Pak Chong">สาขา Big C ปากช่อง / Big C Pak Chong
+                        </option>
+                        <option value="สาขา โลตัส ศาลายา / Lotus Salaya">สาขา โลตัส ศาลายา / Lotus Salaya</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        กรุณาเลือกสาขารับรถ
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3 mb-3 justify-content-center border rounded-3 p-3 shadow-sm bg-light">
+                <div class="col-12">
+                    <label for="return_date">
+                        <i class="fa-solid fa-calendar-week"></i>
+                        วันคืนรถ / Return date
+                    </label>
+                    <input type="text" class="form-control rounded-3" id="return_date" name="return_date" required>
+                    <div class="invalid-feedback">
+                        กรุณาเลือกวันคืนรถ
+                    </div>
+                </div>
+                <div class="col-12 mt-3">
+                    <label for="return_time">
+                        <i class="fa-solid fa-clock"></i>
+                        เวลาคืนรถ / Return time
+                    </label>
+                    <input type="text" class="form-control rounded-3" id="return_time" name="return_time" required>
+                    <div class="invalid-feedback">
+                        กรุณาเลือกเวลาคืนรถ
+                    </div>
+                </div>
+                <div class="col-12 mt-3">
+                    <label for="return_branch">
+                        <i class="fa-solid fa-location-dot"></i>
+                        สาขาคืนรถ / Branch return
+                    </label>
+                    <select class="form-select rounded-3" id="return_branch" name="return_branch" required>
+                        <option value="">เลือกสาขา / Select branch</option>
+                        <option value="สาขา ปตท.พีเอ็ม ประเวศ / Ptt PM Pravate">สาขา ปตท.พีเอ็ม ประเวศ / Ptt PM
+                            Pravate
+                        </option>
+                        <option value="สาขา เดอะมอลล์โคราช / The Mall Korat">สาขา เดอะมอลล์โคราช / The Mall Korat
+                        </option>
+                        <option value="สาขาโลตัส บางแค / Lotus Bang Kae">สาขาโลตัส บางแค / Lotus Bang Kae</option>
+                        <option value="สาขา Big C ปากช่อง / Big C Pak Chong">สาขา Big C ปากช่อง / Big C Pak Chong
+                        </option>
+                        <option value="สาขา โลตัส ศาลายา / Lotus Salaya">สาขา โลตัส ศาลายา / Lotus Salaya</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        กรุณาเลือกสาขาคืนรถ
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3 mb-3 justify-content-center border rounded-3 p-3 shadow-sm bg-light">
+                <div class="col-12">
+                    <label for="province">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        จังหวัดที่จะนำรถไปใช้ / Province where the car is used
+                    </label>
+                    <select type="text" class="form-select rounded-3" id="province" name="province" required>
+                        <option value="">เลือกจังหวัด / Select province</option>
+                        <option value="กรุงเทพมหานคร">กรุงเทพมหานคร</option>
+                        <option value="กระบี่">กระบี่</option>
+                        <option value="กาญจนบุรี">กาญจนบุรี</option>
+                        <option value="กาฬสินธุ์">กาฬสินธุ์</option>
+                        <option value="กำแพงเพชร">กำแพงเพชร</option>
+                        <option value="ขอนแก่น">ขอนแก่น</option>
+                        <option value="จันทบุรี">จันทบุรี</option>
+                        <option value="ฉะเชิงเทรา">ฉะเชิงเทรา</option>
+                        <option value="ชลบุรี">ชลบุรี</option>
+                        <option value="ชัยนาท">ชัยนาท</option>
+                        <option value="ชัยภูมิ">ชัยภูมิ</option>
+                        <option value="ชุมพร">ชุมพร</option>
+                        <option value="เชียงราย">เชียงราย</option>
+                        <option value="เชียงใหม่">เชียงใหม่</option>
+                        <option value="ตรัง">ตรัง</option>
+                        <option value="ตราด">ตราด</option>
+                        <option value="ตาก">ตาก</option>
+                        <option value="นครนายก">นครนายก</option>
+                        <option value="นครปฐม">นครปฐม</option>
+                        <option value="นครพนม">นครพนม</option>
+                        <option value="นครราชสีมา">นครราชสีมา</option>
+                        <option value="นครศรีธรรมราช">นครศรีธรรมราช</option>
+                        <option value="นครสวรรค์">นครสวรรค์</option>
+                        <option value="นนทบุรี">นนทบุรี</option>
+                        <option value="นราธิวาส">นราธิวาส</option>
+                        <option value="น่าน">น่าน</option>
+                        <option value="บึงกาฬ">บึงกาฬ</option>
+                        <option value="บุรีรัมย์">บุรีรัมย์</option>
+                        <option value="ปทุมธานี">ปทุมธานี</option>
+                        <option value="ประจวบคีรีขันธ์">ประจวบคีรีขันธ์</option>
+                        <option value="ปราจีนบุรี">ปราจีนบุรี</option>
+                        <option value="ปัตตานี">ปัตตานี</option>
+                        <option value="พระนครศรีอยุธยา">พระนครศรีอยุธยา</option>
+                        <option value="พะเยา">พะเยา</option>
+                        <option value="พังงา">พังงา</option>
+                        <option value="พัทลุง">พัทลุง</option>
+                        <option value="พิจิตร">พิจิตร</option>
+                        <option value="พิษณุโลก">พิษณุโลก</option>
+                        <option value="เพชรบุรี">เพชรบุรี</option>
+                        <option value="เพชรบูรณ์">เพชรบูรณ์</option>
+                        <option value="แพร่">แพร่</option>
+                        <option value="ภูเก็ต">ภูเก็ต</option>
+                        <option value="มหาสารคาม">มหาสารคาม</option>
+                        <option value="มุกดาหาร">มุกดาหาร</option>
+                        <option value="แม่ฮ่องสอน">แม่ฮ่องสอน</option>
+                        <option value="ยโสธร">ยโสธร</option>
+                        <option value="ยะลา">ยะลา</option>
+                        <option value="ร้อยเอ็ด">ร้อยเอ็ด</option>
+                        <option value="ระนอง">ระนอง</option>
+                        <option value="ระยอง">ระยอง</option>
+                        <option value="ราชบุรี">ราชบุรี</option>
+                        <option value="ลพบุรี">ลพบุรี</option>
+                        <option value="ลำปาง">ลำปาง</option>
+                        <option value="ลำพูน">ลำพูน</option>
+                        <option value="เลย">เลย</option>
+                        <option value="ศรีสะเกษ">ศรีสะเกษ</option>
+                        <option value="สกลนคร">สกลนคร</option>
+                        <option value="สงขลา">สงขลา</option>
+                        <option value="สตูล">สตูล</option>
+                        <option value="สมุทรปราการ">สมุทรปราการ</option>
+                        <option value="สมุทรสงคราม">สมุทรสงคราม</option>
+                        <option value="สมุทรสาคร">สมุทรสาคร</option>
+                        <option value="สระแก้ว">สระแก้ว</option>
+                        <option value="สระบุรี">สระบุรี</option>
+                        <option value="สิงห์บุรี">สิงห์บุรี</option>
+                        <option value="สุโขทัย">สุโขทัย</option>
+                        <option value="สุพรรณบุรี">สุพรรณบุรี</option>
+                        <option value="สุราษฎร์ธานี">สุราษฎร์ธานี</option>
+                        <option value="สุรินทร์">สุรินทร์</option>
+                        <option value="หนองคาย">หนองคาย</option>
+                        <option value="หนองบัวลำภู">หนองบัวลำภู</option>
+                        <option value="อ่างทอง">อ่างทอง</option>
+                        <option value="อำนาจเจริญ">อำนาจเจริญ</option>
+                        <option value="อุดรธานี">อุดรธานี</option>
+                        <option value="อุตรดิตถ์">อุตรดิตถ์</option>
+                        <option value="อุทัยธานี">อุทัยธานี</option>
+                        <option value="อุบลราชธานี">อุบลราชธานี</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        กรุณากรอกจังหวัดที่จะนำรถไปใช้
+                    </div>
+                </div>
+                <div class="col-12 mt-3">
+                    <label for="advertisement">
+                        <i class="fa-solid fa-newspaper"></i>
+                        คุณพบโฆษณาเราจากสื่อใด / Where did you find our ads?
+                    </label>
+                    <select class="form-select rounded-3" id="advertisement" name="advertisement" required>
+                        <option value="">เลือกสื่อ / Select media</option>
+                        <option value="Google">Google</option>
+                        <option value="Facebook">Facebook</option>
+                        <option value="Line VOOM">Line VOOM</option>
+                        <option value="เพื่อนแนะนำ">เพื่อนแนะนำ</option>
+                        <option value="อื่นๆ">อื่นๆ</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        กรุณาเลือกสื่อที่คุณพบโฆษณาเรา
+                    </div>
+                </div>
+                <div class="col-12 d-none mt-3">
+                    <!-- ระบุ -->
+                    <label for="advertisement_detail">
+                        <i class="fa-solid fa-newspaper"></i>
+                        ระบุสื่อที่คุณพบโฆษณาเรา
+                    </label>
+                    <input type="text" class="form-control rounded-3" id="advertisement_detail"
+                        name="advertisement_detail">
+                    <div class="invalid-feedback">
+                        กรุณาระบุสื่อที่คุณพบโฆษณาเรา
+                    </div>
+                </div>
+                <div class="col-12 text-center mt-5">
+                    <button class="btn btn-primary rounded-3 w-75" id="submit">
+                        <i class="fa-solid fa-car"></i>
+                        ตรวจสอบรถว่าง
+                    </button>
+                </div>
+            </div>
+    </div>
+    </form>
+    </div>
+    <div class="container px-2 pb-4" id="carResultsContainer" style="display: none;">
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="text-center h4">รถที่ว่างในช่วงเวลาที่คุณเลือก</div>
+                <span class="text-center h6">Car available in your selected time</span>
+            </div>
+            <div class="col-12 mt-3">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control rounded-3 shadow-none" id="pickup-datetime" readonly
+                        placeholder="รับรถ / Pick up">
+                    <label for="pickup-datetime">รับรถ / Pick up</label>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control rounded-3 shadow-none" id="return-datetime" readonly
+                        placeholder="คืนรถ / Return date">
+                    <label for="return-datetime">คืนรถ / Return date</label>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="d-grid">
+                    <button id="resetFilter" class="btn  btn-sm btn-outline-secondary rounded-3 mb-3">
+                        <i class="fa-solid fa-rotate"></i>
+                        รีเซ็ตตัวกรอง / Reset Filter
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="carResults" class="row mb-4 g-3">
+            <!-- Car cards will be shown here dynamically -->
+        </div>
+
+        <!-- Car card template -->
+        <template id="carCardTemplate">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <img src="" class="card-img-top px-3" alt="Car Image">
+                    <div class="card-body m-0 p-0 text-center">
+                        <button class="btn btn-select rounded-3 btn-sm text-decoration-none mb-3"
+                            onclick="sendData(this)">
+                            <!-- <i class="fa-solid fa-car"></i> -->
+                            ขอราคารถคันนี้&nbsp;
+                            <i class="fa-solid fa-tag fa-flip"></i>
+                            <!-- <i class="fa-solid fa-car-side"></i>&nbsp; -->
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+    <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
+    <script>
+        // VConsole will be exported to `window.VConsole` by default.
+        // var vConsole = new window.VConsole();
+    </script>
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzOz0J3XboXz7_vZIS8i-Zke8Srw7k-mHvNR3XBmyTwh2zs3oLQtz-LRcu4y17Pbs0/exec'
+        $(document).ready(() => {
+            showLoading()
+            $('#province').select2({
+                theme: 'bootstrap-5',
+                placeholder: 'เลือกจังหวัด / Select province',
+                allowClear: true,
+                width: '100%',
+            });
+            let pck_d = $('#pickup_date').flatpickr({
+                locale: 'th',
+                dateFormat: 'd/m/Y',
+                minDate: 'today',
+                allowInput: true,
+                onChange: function (selectedDates, dateStr, instance) {
+                    const today = moment().format('DD/MM/YYYY');
+                    if (dateStr == today) {
+                        const now = moment();
+                        if ($('#pickup_time').val() == '' || moment($('#pickup_time').val(), 'H:i').isBefore(now)) {
+                            const nextHour = moment().add(1, 'hour')
+                            pck_t.setDate(nextHour.format('H:00'))
+                            rtn_t.setDate(nextHour.format('H:00'))
+                            pck_t.set('minDate', nextHour.format('H:i'))
+                        }
+                    } else {
+                        pck_t.set('minDate', '00:00')
+                        pck_t.setDate('08:00')
+                    }
+
+                    rtn_d.setDate(moment(dateStr, 'DD/MM/YYYY').add(1, 'days').format('DD/MM/YYYY'))
+
+                    rtn_d.set('minDate', moment(dateStr, 'DD/MM/YYYY').add(1, 'days').format('DD/MM/YYYY'))
+                }
+                // maxDate: new Date().fp_incr(30), // 30 days from now
+            });
+            let rtn_d = $('#return_date').flatpickr({
+                locale: 'th',
+                dateFormat: 'd/m/Y',
+                allowInput: true,
+                minDate: moment().add(1, 'days').format('DD/MM/YYYY'),
+            });
+            let pck_t = $('#pickup_time').flatpickr({
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+                allowInput: true,
+                defaultHour: 16,
+                defaultMinute: 0,
+            });
+            let rtn_t = $('#return_time').flatpickr({
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+                allowInput: true,
+                defaultHour: 12,
+                defaultMinute: 0,
+            });
+            $('#advertisement').change(function () {
+                if ($(this).val() == 'อื่นๆ') {
+                    $('#advertisement_detail').prop('required', true).parent().removeClass('d-none')
+                } else {
+                    $('#advertisement_detail').val('').prop('required', false).parent().addClass('d-none')
+                }
+            })
+            init()
+
+        })
+
+        function init() {
+            // liff.init({ liffId: '1655873446-MpmBPPzl' })
+            liff.ready.then(() => {
+                // if (!liff.isInClient()) {
+                //     return Swal.fire({
+                //         icon: 'warning',
+                //         title: 'กรุณาเปิดในแอป LINE',
+                //         text: 'กรุณาเปิดในแอป LINE เท่านั้น',
+                //         customClass: {
+                //             popup: 'rounded-4',
+                //         },
+                //         allowOutsideClick: false,
+                //         showConfirmButton: false,
+                //     })
+                // }
+                // $.post(scriptURL, { 
+                //     uid: liff.getDecodedIDToken().sub,
+                //     opt: 'saveUser' ,
+                //     line_name: liff.getDecodedIDToken().name,
+                // }, function (res) {
+                //     if (res.success) {
+                //         console.log(res)
+                //     }
+                // })
+                if (!liff.isLoggedIn()) {
+                    liff.login()
+                } else {
+
+                    liff.getProfile().then(profile => {
+                        $('#line_name').val(profile.displayName)
+                        $('#line_name').attr('readonly', true)
+                    }).catch(err => {
+                        console.error(err)
+                    })
+
+                }
+            }).catch(err => {
+                console.error(err)
+            })
+        }
+
+        function submit() {
+            showLoading('./waiting.png')
+            let data = $('#mainform').serializeArray().reduce((obj, item) => {
+                obj[item.name] = item.value
+                return obj
+            }, { uid: liff.getDecodedIDToken().sub, opt: 'filter' })
+            data.pickup_datetime = moment(data.pickup_date + ' ' + data.pickup_time, 'DD/MM/YYYY HH:mm').format('YYYY-MM-DDTHH:mm:ss')
+            data.return_datetime = moment(data.return_date + ' ' + data.return_time, 'DD/MM/YYYY HH:mm').format('YYYY-MM-DDTHH:mm:ss')
+
+            console.log(data);
+            $.post(scriptURL, data, function (res) {
+                hideLoading()
+                if (res.success) {
+                    if (res.data.length == 0) {
+                        return Swal.fire({
+                            icon: 'warning',
+                            title: 'ไม่พบรถว่างในช่วงเวลาที่คุณเลือก',
+                            text: 'กรุณาลองเลือกช่วงเวลาใหม่อีกครั้ง',
+                            confirmButtonText: 'ตกลง',
+                            customClass: {
+                                popup: 'rounded-4',
+                            }
+                        })
+                    }
+                    renderCarCards(res.data, data.pickup_datetime, data.return_datetime)
+                }
+                console.log(res)
+            })
+            // let d = [{ "brand": "Toyota", "model": "yaris ative", "license_plate": "4 ขฮ 2330", "color": "ขาว", "branch": "", "image": "https://drive.google.com/file/d/16uD6OTukNt9Wgo0rHJqSgD_72sCV8kpF/view?usp=drive_link" }, { "brand": "Toyota", "model": "Veloz", "license_plate": "4 ขฬ 8957", "color": "เทาดำ", "branch": "", "image": "https://drive.google.com/file/d/1pVoPWKbtM-Ydsxfzcc8SzJvcpJbaeQ-S/view?usp=drive_link" }, { "brand": "Toyota", "model": "Veloz", "license_plate": "5 ขย 6091", "color": "เทาดำ", "branch": "", "image": "https://drive.google.com/file/d/1pVoPWKbtM-Ydsxfzcc8SzJvcpJbaeQ-S/view?usp=drive_link" }, { "brand": "MG", "model": "4 Electric", "license_plate": "5 ขร 3224", "color": "ดำ", "branch": "", "image": "https://drive.google.com/file/d/1kr-3ZZH70g8JUIfdYdX7mtN1rwqWiloW/view?usp=drive_link" }]
+            // renderCarCards(d, data.pickup_datetime, data.return_datetime)
+        }
+
+        function renderCarCards(data, pickup_datetime, return_datetime) {
+            console.log("🚀 ~ renderCarCards ~ data:", data)
+            const carResults = $('#carResults')
+            carResults.empty()
+            $('#pickup-datetime').val(moment(pickup_datetime, 'YYYY-MM-DDTHH:mm:ss').format('LLLL') + ' น.')
+            $('#return-datetime').val(moment(return_datetime, 'YYYY-MM-DDTHH:mm:ss').format('LLLL') + ' น.')
+            const template = $('#carCardTemplate').html()
+            data.forEach(car => {
+                const card = $(template)
+                let imageUrl = 'https://lh3.googleusercontent.com/d/' + car.image.split('/d/')[1].split('/')[0]
+                card.find('.card-img-top').attr('src', imageUrl)
+                card.find('.card-img-top').attr('alt', car.brand + ' ' + car.model)
+                card.find('.btn-select').attr({
+                    'data-brand': car.brand,
+                    'data-model': car.model,
+                    'data-license_plate': car.license_plate,
+                    'data-color': car.color,
+                    'data-branch': car.branch,
+                    'data-image': imageUrl
+                })
+                carResults.append(card)
+            })
+            $('#main').slideUp(200, function () {
+                $('#carResultsContainer').slideDown(200)
+            })
+            $('#resetFilter').off('click').click(function () {
+                $('#carResultsContainer').slideUp(200, function () {
+                    $('#main').slideDown(200)
+                })
+                $('#mainform')[0].reset();
+                $('#mainform').removeClass('was-validated');
+                $('#pickup-datetime').val('');
+                $('#return-datetime').val('');
+                $('#line_name').val(liff.getDecodedIDToken().name)
+            });
+        }
+
+        async function sendData(button) {
+            const {
+                brand,
+                model,
+                license_plate,
+                color,
+                branch,
+                image
+            } = button.dataset;
+            let pickup_datetime = moment($('#pickup-datetime').val(), 'LLLL').format('DD-MM-YYYY HH:mm')
+            let return_datetime = moment($('#return-datetime').val(), 'LLLL').format('DD-MM-YYYY HH:mm')
+            let pickup_branch = $('#pickup_branch').val()
+            let return_branch = $('#return_branch').val()
+            let province = $('#province').val()
+            let advertisement = $('#advertisement').val()
+            let advertisement_detail = $('#advertisement_detail').val()
+            let duration = getDuration(pickup_datetime, return_datetime)
+            let data = {
+                brand,
+                model,
+                license_plate,
+                color,
+                branch,
+                image,
+                pickup_date: $('#pickup_date').val(),
+                pickup_time: $('#pickup_time').val(),
+                return_date: $('#return_date').val(),
+                return_time: $('#return_time').val(),
+                duration_days: duration.days,
+                duration_hours: duration.hours,
+                duration_minutes: duration.minutes,
+                pickup_branch,
+                return_branch,
+                province,
+                advertisement,
+                advertisement_detail,
+                line_name: $('#line_name').val(),
+                uid: liff.getDecodedIDToken().sub,
+                pickup_datetime,
+                return_datetime
+            }
+            saveToSheet(data)
+            await sendToLine(data)
+            Swal.fire({
+                icon: 'success',
+                title: 'ส่งข้อมูลเรียบร้อย',
+                text: 'เราจะติดต่อกลับไปในเร็วๆนี้',
+                customClass: {
+                    popup: 'rounded-4',
+                },
+                confirmButtonText: 'ตกลง',
+            }).then(() => {
+                liff.closeWindow()
+            })
+        }
+
+        function getDuration(pickup_datetime, return_datetime) {
+            const pickupDateTime = moment(pickup_datetime, 'DD/MM/YYYY HH:mm');
+            const returnDateTime = moment(return_datetime, 'DD/MM/YYYY HH:mm');
+            // Calculate the duration between two dates
+            const duration = moment.duration(returnDateTime.diff(pickupDateTime));
+            const days = Math.floor(duration.asDays());
+            const hours = duration.hours();
+            const minutes = duration.minutes();
+
+            // Return the duration as an object
+            return {
+                days: days,
+                hours: hours,
+                minutes: minutes,
+                text: `${days > 0 ? days + ' วัน ' : ''}${hours > 0 || days > 0 ? hours + ' ชั่วโมง ' : ''}${minutes} นาที`.trim()
+            };
+        }
+
+        function saveToSheet(data) {
+            data.opt = 'save'
+            console.log(data);
+            $.post(scriptURL, data, function (res) {
+                if (res.success) {
+                    console.log('Data saved to sheet')
+                    resolve()
+                } else {
+                    console.error('Error saving data to sheet')
+                    reject()
+                }
+            })
+        }
+
+        function sendToLine(data) {
+            return new Promise((resolve, reject) => {
+                // Create a Flex Message
+                let flexMessage = {
+                    type: "flex",
+                    altText: "รายละเอียดการขอราคารถ",
+                    contents: {
+                        type: "bubble",
+                        size: "giga",
+                        hero: {
+                            type: "image",
+                            url: data.image,
+                            size: "5xl",
+                            aspectRatio: "1:1",
+                            aspectMode: "cover",
+                            action: {
+                                type: "uri",
+                                uri: data.image
+                            }
+                        },
+                        header: {
+                            type: "box",
+                            layout: "vertical",
+                            contents: [
+                                {
+                                    type: "text",
+                                    text: "🏷️ ขอราคารถ",
+                                    weight: "bold",
+                                    size: "xl",
+                                    color: "#ffffff",
+                                    align: "center",
+                                    wrap: true,
+                                    scaling: true
+                                }
+                            ],
+                            backgroundColor: "#0078D7",
+                            paddingAll: "15px"
+                        },
+                        body: {
+                            type: "box",
+                            layout: "vertical",
+                            contents: [
+                                {
+                                    type: "box",
+                                    layout: "vertical",
+                                    contents: [
+                                        {
+                                            type: "text",
+                                            text: "🚘 ข้อมูลรถ",
+                                            weight: "bold",
+                                            color: "#1DB446",
+                                            size: "md",
+                                            wrap: true,
+                                            scaling: true
+                                        },
+                                        {
+                                            type: "box",
+                                            layout: "vertical",
+                                            contents: [
+                                                {
+                                                    type: "box",
+                                                    layout: "horizontal",
+                                                    contents: [
+                                                        {
+                                                            type: "text",
+                                                            text: "ยี่ห้อ:",
+                                                            size: "sm",
+                                                            color: "#555555",
+                                                            flex: 2,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        },
+                                                        {
+                                                            type: "text",
+                                                            text: data.brand,
+                                                            size: "sm",
+                                                            color: "#111111",
+                                                            flex: 4,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    type: "box",
+                                                    layout: "horizontal",
+                                                    contents: [
+                                                        {
+                                                            type: "text",
+                                                            text: "รุ่น:",
+                                                            size: "sm",
+                                                            color: "#555555",
+                                                            flex: 2,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        },
+                                                        {
+                                                            type: "text",
+                                                            text: data.model,
+                                                            size: "sm",
+                                                            color: "#111111",
+                                                            flex: 4,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    type: "box",
+                                                    layout: "horizontal",
+                                                    contents: [
+                                                        {
+                                                            type: "text",
+                                                            text: "สี:",
+                                                            size: "sm",
+                                                            color: "#555555",
+                                                            flex: 2,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        },
+                                                        {
+                                                            type: "text",
+                                                            text: data.color,
+                                                            size: "sm",
+                                                            color: "#111111",
+                                                            flex: 4,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            margin: "md"
+                                        }
+                                    ],
+                                    paddingBottom: "15px",
+                                    paddingTop: "5px"
+                                },
+                                {
+                                    type: "separator"
+                                },
+                                {
+                                    type: "box",
+                                    layout: "vertical",
+                                    contents: [
+                                        {
+                                            type: "text",
+                                            text: "📅 ข้อมูลการเช่า",
+                                            weight: "bold",
+                                            color: "#1DB446",
+                                            size: "md",
+                                            wrap: true,
+                                            scaling: true
+                                        },
+                                        {
+                                            type: "box",
+                                            layout: "vertical",
+                                            contents: [
+                                                {
+                                                    type: "box",
+                                                    layout: "horizontal",
+                                                    contents: [
+                                                        {
+                                                            type: "text",
+                                                            text: "วันรับรถ:",
+                                                            size: "sm",
+                                                            color: "#555555",
+                                                            flex: 2,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        },
+                                                        {
+                                                            type: "text",
+                                                            text: data.pickup_datetime,
+                                                            size: "sm",
+                                                            color: "#111111",
+                                                            flex: 4,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    type: "box",
+                                                    layout: "horizontal",
+                                                    contents: [
+                                                        {
+                                                            type: "text",
+                                                            text: "สาขารับรถ:",
+                                                            size: "sm",
+                                                            color: "#555555",
+                                                            flex: 2,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        },
+                                                        {
+                                                            type: "text",
+                                                            text: data.pickup_branch,
+                                                            size: "sm",
+                                                            color: "#111111",
+                                                            flex: 4,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    type: "box",
+                                                    layout: "horizontal",
+                                                    contents: [
+                                                        {
+                                                            type: "text",
+                                                            text: "วันคืนรถ:",
+                                                            size: "sm",
+                                                            color: "#555555",
+                                                            flex: 2,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        },
+                                                        {
+                                                            type: "text",
+                                                            text: data.return_datetime,
+                                                            size: "sm",
+                                                            color: "#111111",
+                                                            flex: 4,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        }
+                                                    ],
+                                                    margin: "md"
+                                                },
+                                                {
+                                                    type: "box",
+                                                    layout: "horizontal",
+                                                    contents: [
+                                                        {
+                                                            type: "text",
+                                                            text: "สาขาคืนรถ:",
+                                                            size: "sm",
+                                                            color: "#555555",
+                                                            flex: 2,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        },
+                                                        {
+                                                            type: "text",
+                                                            text: data.return_branch,
+                                                            size: "sm",
+                                                            color: "#111111",
+                                                            flex: 4,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            margin: "md"
+                                        }
+                                    ],
+                                    paddingBottom: "15px",
+                                    paddingTop: "15px"
+                                },
+                                {
+                                    type: "separator"
+                                },
+                                {
+                                    type: "box",
+                                    layout: "vertical",
+                                    contents: [
+                                        {
+                                            type: "text",
+                                            text: "📍 ข้อมูลการใช้รถ",
+                                            weight: "bold",
+                                            color: "#1DB446",
+                                            size: "md",
+                                            wrap: true,
+                                            scaling: true
+                                        },
+                                        {
+                                            type: "box",
+                                            layout: "vertical",
+                                            contents: [
+                                                {
+                                                    type: "box",
+                                                    layout: "horizontal",
+                                                    contents: [
+                                                        {
+                                                            type: "text",
+                                                            text: "จังหวัด:",
+                                                            size: "sm",
+                                                            color: "#555555",
+                                                            flex: 2,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        },
+                                                        {
+                                                            type: "text",
+                                                            text: data.province,
+                                                            size: "sm",
+                                                            color: "#111111",
+                                                            flex: 4,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    type: "box",
+                                                    layout: "horizontal",
+                                                    contents: [
+                                                        {
+                                                            type: "text",
+                                                            text: "พบโฆษณาจาก:",
+                                                            size: "sm",
+                                                            color: "#555555",
+                                                            flex: 2,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        },
+                                                        {
+                                                            type: "text",
+                                                            text: data.advertisement == 'อื่นๆ' ? (data.advertisement_detail && data.advertisement_detail != '' ? data.advertisement_detail : '-') : data.advertisement,
+                                                            size: "sm",
+                                                            color: "#111111",
+                                                            flex: 4,
+                                                            wrap: true,
+                                                            scaling: true
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            margin: "md"
+                                        }
+                                    ],
+                                    paddingBottom: "15px",
+                                    paddingTop: "15px"
+                                }
+                            ],
+                            paddingAll: "20px"
+                        },
+                        footer: {
+                            type: "box",
+                            layout: "vertical",
+                            contents: [
+                                {
+                                    type: "text",
+                                    text: "ขอยืนยันว่า " + data.line_name + " เป็นผู้ส่งข้อมูลด้วยตัวเอง",
+                                    size: "sm",
+                                    color: "#aaaaaa",
+                                    align: "center",
+                                    wrap: true,
+                                    scaling: true
+                                }
+                            ]
+                        }
+                    }
+                };
+
+                // Send the messages to LINE
+                liff.sendMessages([
+                    flexMessage
+                ]).then(() => {
+                    console.log('message sent');
+                    resolve();
+                }).catch((err) => {
+                    console.error(err);
+                    reject(err);
+                });
+                // liff.sendMessages([{
+                //     type: 'text',
+                //     text: message
+                // }, {
+                //     type: 'image',
+                //     originalContentUrl: data.image,
+                //     previewImageUrl: data.image
+                // }]).then(() => {
+                //     console.log('message sent');
+                //     resolve()
+                // }).catch((err) => {
+                //     console.error(err);
+                // });
+            })
+
+        }
+
+    </script>
+     <script>
+        function showLoading(img,isloading) {
+            if (img) {
+                $('#loadingOverlay').find('img').attr('src', img)
+            }
+            if (isloading) {
+                $('#loadingOverlay').find('img').addClass('loading')
+            } else {
+                $('#loadingOverlay').find('img').removeClass('loading')
+            }
+            $('#loadingOverlay').fadeIn(300).css('display', 'flex');
+            $('body').addClass('loading');
+            setTimeout(() => {
+               hideLoading();
+            }, 4000);
+        }
+
+        function hideLoading() {
+            $('#loadingOverlay').fadeOut(500)
+            $('body').removeClass('loading');
+        }
+
+    </script>
+    <script>
+        (function () {
+            'use strict'
+            const form = document.querySelector('.needs-validation')
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault()
+                if (form.checkValidity() === false) {
+                    event.stopPropagation()
+                    form.classList.add('was-validated')
+                    return $(form).find(':invalid').first().focus()
+                }
+                submit()
+            })
+        })()
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/locale/th.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+    <script src=" https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</body>
+
+</html>
